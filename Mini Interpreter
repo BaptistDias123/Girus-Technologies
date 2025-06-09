@@ -1,0 +1,33 @@
+class MiniInterpreter:
+    def _init_(self):
+        self.variables = {}
+
+    def evaluate(self, statement):
+        if statement.startswith("let"):
+            self.handle_let(statement)
+        elif statement.startswith("if"):
+            return self.handle_if(statement)
+        return None
+
+    def handle_let(self, statement):
+        _, var, value = statement.split()
+        self.variables[var] = int(value)
+
+    def handle_if(self, statement):
+        condition, result = statement[3:].split(" then ")
+        var, op, value = condition.split()
+        value = int(value)
+
+        if op == "==":
+            if self.variables.get(var) == value:
+                return result
+        elif op == "!=":
+            if self.variables.get(var) != value:
+                return result
+        return None
+
+# Test case
+interpreter = MiniInterpreter()
+interpreter.evaluate("let x 10")
+print(interpreter.evaluate("if x == 10 then 'x is ten'"))  # Output: 'x is ten'
+print(interpreter.evaluate("if x != 10 then 'x is not ten'"))  # Output: None
