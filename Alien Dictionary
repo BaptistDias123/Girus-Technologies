@@ -1,0 +1,39 @@
+from collections import defaultdict, deque
+
+class AlienDictionary:
+    def _init_(self, words):
+        self.words = words
+
+    def find_order(self):
+        graph = defaultdict(set)
+        in_degree = {char: 0 for word in self.words for char in word}
+
+        for i in range(len(self.words) - 1):
+            word1, word2 = self.words[i], self.words[i + 1]
+            for c1, c2 in zip(word1, word2):
+                if c1 != c2:
+                    if c2 not in graph[c1]:
+                        graph[c1].add(c2)
+                        in_degree[c2] += 1
+                    break
+            else:
+                if len(word1) > len(word2):
+                    return ""
+
+        queue = deque([char for char in in_degree if in_degree[char] == 0])
+        order = []
+
+        while queue:
+            char = queue.popleft()
+            order.append(char)
+            for neighbor in graph[char]:
+                in_degree[neighbor] -= 1
+                if in_degree[neighbor] == 0:
+                    queue.append(neighbor)
+
+        return ''.join(order) if len(order) == len(in_degree) else ""
+
+# Test case
+words = ["wrt", "wrf", "er", "ett", "rftt"]
+alien_dict = AlienDictionary(words)
+print(alien_dict.find_order())  # Output: "wertf"
