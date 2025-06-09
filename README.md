@@ -1,1 +1,0 @@
-# Girus-Technologies
