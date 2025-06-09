@@ -1,0 +1,52 @@
+from collections import deque
+
+class KnightsAndPortals:
+    def _init_(self, grid):
+        self.grid = grid
+        self.rows = len(grid)
+        self.cols = len(grid[0]) if self.rows > 0 else 0
+
+    def shortest_path(self):
+        if not self.grid or not self.grid[0]:
+            return -1
+
+        directions = [(1, 0), (-1, 0), (0, 1), (0, -1)]
+        queue = deque([(0, 0, 0)])  # (row, col, distance)
+        visited = set((0, 0))
+        portals = {}
+
+        for r in range(self.rows):
+            for c in range(self.cols):
+                if self.grid[r][c] == 'P':
+                    portals[(r, c)] = []
+
+        while queue:
+            r, c, dist = queue.popleft()
+            if (r, c) == (self.rows - 1, self.cols - 1):
+                return dist
+
+            for dr, dc in directions:
+                nr, nc = r + dr, c + dc
+                if 0 <= nr < self.rows and 0 <= nc < self.cols and (nr, nc) not in visited and self.grid[nr][nc] != 'X':
+                    visited.add((nr, nc))
+                    queue.append((nr, nc, dist + 1))
+
+            if (r, c) in portals:
+                for (pr, pc) in portals[(r, c)]:
+                    if (pr, pc) not in visited:
+                        visited.add((pr, pc))
+                        queue.append((pr, pc, dist + 1))
+
+        return -1
+
+# Test case
+grid = [
+    ['.', '.', '.', 'X', 'P'],
+    ['X', 'X', '.', 'X', '.'],
+    ['.', '.', '.', '.', '.'],
+    ['P', 'X', 'X', 'X', '.'],
+    ['.', '.', '.', 'P', '.']
+]
+
+knights_portals = KnightsAndPortals(grid)
+print(knights_portals.shortest_path())  # Output: Shortest path length
